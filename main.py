@@ -1,11 +1,15 @@
+import configparser
+import logging
+from escpos.printer import Serial
 from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from typing import List
-from escpos.printer import Serial
-import configparser
 
 CONFIG_FILE_NAME = 'config.ini'
+OFFLINE = True
 
 # load config
 config = configparser.ConfigParser()
@@ -13,16 +17,25 @@ config.read(CONFIG_FILE_NAME)
 PRINTER_SERIAL_ADDRESS = config["printer"]["serial_address"]
 PRINTER_BAUDRATE = config["printer"]["baudrate"]
 
+class FakePrinter:
+    def textln(self, text):
+        pass
+    def cut(self):
+        pass
+
 # initialise printer
-p = Serial(PRINTER_SERIAL_ADDRESS, baudrate=PRINTER_BAUDRATE)
+if not OFFLINE:
+    p = Serial(PRINTER_SERIAL_ADDRESS, baudrate=PRINTER_BAUDRATE)
+else:
+    p = FakePrinter()
 
 class Step(BaseModel):
-    type: str
-    content: str
-    style: int
+    type: str | None = None
+    content: str | None = None
+    style: int | None = None
 
 class Job(BaseModel):
-    steps: List[Step]
+    steps: list[Step] | None = None
 
 # define api
 app = FastAPI()
@@ -38,3 +51,12 @@ def post_job(job: Job):
     p.cut()
 
 app.mount("/", StaticFiles(directory="static"), name="static")
+
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+	exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
+	logging.error(f"{request}: {exc_str}")
+	content = {'status_code': 10422, 'message': exc_str, 'data': None}
+	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
