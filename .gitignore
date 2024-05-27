@@ -3,3 +3,4 @@
 ## ignore python cache files
 *.pyc
 __pycache__/
+.venv/
