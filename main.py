@@ -11,7 +11,7 @@ CONFIG_FILE_NAME = 'config.ini'
 config = configparser.ConfigParser()
 config.read(CONFIG_FILE_NAME)
 PRINTER_SERIAL_ADDRESS = config["printer"]["serial_address"]
-PRINTER_BAUDRATE = config["printer"]["baud_rate"]
+PRINTER_BAUDRATE = config["printer"]["baudrate"]
 
 # initialise printer
 p = Serial(PRINTER_SERIAL_ADDRESS, baudrate=PRINTER_BAUDRATE)
