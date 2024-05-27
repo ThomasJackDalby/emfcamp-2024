@@ -1,7 +1,6 @@
 import configparser
 import logging
 from escpos.printer import Serial
-from fastapi import FastAPI
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -9,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 CONFIG_FILE_NAME = 'config.ini'
-OFFLINE = True
+OFFLINE = False
 
 # load config
 config = configparser.ConfigParser()
