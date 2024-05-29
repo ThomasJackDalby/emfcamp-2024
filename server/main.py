@@ -36,13 +36,16 @@ if not OFFLINE:
 else:
     p = FakePrinter()
 
+class Style(BaseModel):
+    pass
+
 class Command(BaseModel):
     type: str | None = None
     content: str | None = None
     style: int | None = None
 
 class PrintJob(BaseModel):
-    commands: list[Command] | None = None
+    commands: list[Command | Style] | None = None # not sure a union between two classes is allowed
 
 def print_error_message(e: Exception):
     p.textln("------------")
