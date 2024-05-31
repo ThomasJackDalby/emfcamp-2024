@@ -6,7 +6,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-logging.basicConfig(filename="weblogs.txt")
+logging.basicConfig(filename="~/emfcamp-2024/server/static/fastapi.log")
 
 logger = logging.getLogger(__name__)
 
