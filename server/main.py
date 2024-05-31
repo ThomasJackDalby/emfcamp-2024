@@ -6,6 +6,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+logging.basicConfig(filename="weblogs.txt")
+
+logger = logging.getLogger(__name__)
 
 CONFIG_FILE_NAME = 'config.ini'
 
@@ -64,6 +67,7 @@ def get_root():
 
 @app.post("/api/print")
 def post_job(job: PrintJob):
+    logger.info("Got request!")
     try:
         for command in job.commands:
             if command.type == COMMAND_TEXT: p.textln(command.content)
