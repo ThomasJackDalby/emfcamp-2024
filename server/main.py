@@ -12,6 +12,7 @@ CONFIG_FILE_NAME = 'config.ini'
 COMMAND_TEXT = "text"
 COMMAND_CUT = "cut"
 COMMAND_FEED = "feed"
+COMMAND_BARCODE = "barcode"
 
 # load config
 config = configparser.ConfigParser()
@@ -45,7 +46,8 @@ class Command(BaseModel):
     style: int | None = None
 
 class PrintJob(BaseModel):
-    commands: list[Command | Style] | None = None # not sure a union between two classes is allowed
+    styles: list[Style] | None = None
+    commands: list[Command] | None = None
 
 def print_error_message(e: Exception):
     p.textln("------------")
@@ -62,14 +64,15 @@ def get_root():
 
 @app.post("/api/print")
 def post_job(job: PrintJob):
-    current_style = None
-
     try:
         for command in job.commands:
             if command.type == COMMAND_TEXT: p.textln(command.content)
             elif command.type == COMMAND_FEED: p.feed(5)
             elif command.type == COMMAND_CUT: p.cut()
+            elif command.type == COMMAND_BARCODE: pass
     except Exception as e:
+        print("Uh oh, had an error")
+        print(e.message)
         p.cut()
         p.textln("!! ERROR !!")
         # print out an error message?

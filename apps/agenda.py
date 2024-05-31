@@ -9,7 +9,7 @@ import printers
 from rich import print, traceback
 traceback.install()
 
-PRINTER_TYPE = printers.CONSOLE
+PRINTER_TYPE = printers.REMOTE
 USE_CACHED_DATA = False
 CACHED_SCHEDULE_FILE_PATH = ".cache/schedule.json"
 URL = "https://www.emfcamp.org/schedule/2024.json"
@@ -56,7 +56,7 @@ def print_talk(talk, barcode=False, description=False):
     p.textln("-"*42)
 
 def print_schedule(data, day):
-    data = list(filter(lambda talk: get_day(talk["start_date"]) == day, data))
+    data = list(filter(lambda talk: parse_datetime(talk['start_date']).day == day, data))
     p.set(double_height=True, double_width=True, bold=True, align="center")
     p.textln("EMF SCHEDULE")
     p.textln(day)
@@ -94,26 +94,31 @@ def print_custom(data, name):
             print_talk(talk)
 
 def print_cancel():
-    p.set(double_height=True, double_width=True, bold=True, align="center")
-    p.textln("CANCEL CANCEL")
-    p.barcode("00000000000", "UPC-A")
-    p.textln("CANCEL CANCEL")
-    p.cut()
+    with printers.get_printer(PRINTER_TYPE) as p:
+        p.set(double_height=True, double_width=True, bold=True, align="center")
+        p.textln("CANCEL CANCEL")
+        p.barcode("00000000000", "UPC-A")
+        p.textln("CANCEL CANCEL")
+        p.cut()
 
-def print_random_schedule():
-    p.set(double_height=True, double_width=True, bold=True, align="center")
-    p.textln("EMF SCHEDULE")
-    p.textln("RANDOM")
+def print_random_schedule(data):
+    with printers.get_printer(PRINTER_TYPE) as p:
+        p.set(double_height=True, double_width=True, bold=True, align="center")
+        p.textln("EMF SCHEDULE")
+        p.textln("RANDOM")
 
-    for i in range(10):
-        talk = random.choice(data)
-        print_talk(talk)
+        for i in range(10):
+            talk = random.choice(data)
+            print_talk(p, talk)
 
 if __name__ == "__main__":
-    data = get_data()
-    print_random_schedule()
+    if len(sys.argv) == 1: raise Exception("Command needed")
 
-    # if len(sys.argv) == 1: print_custom(data, None)
+    command = sys.argv[1]
+    if command == "cancel": print_cancel()
+    elif command == "schedule": print_schedule(get_data(), datetime.datetime.now().day)
+       
+        # if len(sys.argv) == 1: print_custom(data, None)
     # else:
     #     name = sys.argv[1]
     #     print_custom(data, name)

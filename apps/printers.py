@@ -2,46 +2,100 @@ import requests
 
 REMOTE = 0
 CONSOLE = 1
+RECEIPT = 2
 
 class Printer:
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self,  exception_type, exception_value, exception_traceback):
+        pass
+
     def textln(self, text: str=""):
-        raise Exception()
+        raise Exception("Not implemented")
 
     def feed(self, amount):
-        raise Exception()
+        raise Exception("Not implemented")
         
     def set(self, double_height=False, double_width=False, bold=False, align="left", underline=False):
-        raise Exception()
+        raise Exception("Not implemented")
 
     def barcode(self, barcode, type):
-        raise Exception()
+        raise Exception("Not implemented")
 
     def cut(self):
-        raise Exception()
+        raise Exception("Not implemented")
+    
+    def flush(self):
+        pass
+
+COMMAND_TEXT = "text"
+COMMAND_CUT = "cut"
+COMMAND_FEED = "feed"
 
 class RemotePrinter(Printer):
     def __init__(self):
-        self.url = ""
+        self.url = "http://151.216.211.144:8000/api/print"
+        self.commands = []
+        self.styles = []
+        self.current_style = {}
 
     def __enter__(self):
         self.commands = []
+        self.styles = []
+        self.set() # set a default style
         return self
     
-    def __exit__(self):
-        request = {
-            "commands": self.commands
-        }
-        requests.post(self.url, json=request)
+    def __exit__(self, exception_type, exception_value, exception_traceback):
+        self.flush()
 
     def textln(self, text: str=""):
         self.commands.append({
-            ""
+            "type" : COMMAND_TEXT,
+            "content" : text
+        })
+    
+    def _get_style_index(self, style):
+        for existing_style, i in enumerate(self.styles):
+            if style == existing_style:
+                return i
+        return None
+
+    def set(self, double_height=False, double_width=False, bold=False, align="left", underline=False):
+        style = {
+            "double_height": double_height,
+            "double_width": double_width,
+            "bold": bold,
+            "align": align,
+            "underline": underline
+        }
+        style_index = self._get_style_index(style)
+        if style_index is None:
+            self.styles.append(style)
+            style_index = len(self.styles)
+        self.style_index = style_index
+    
+    def cut(self):
+        self.commands.append({
+            "type" : COMMAND_CUT
         })
 
+    def barcode(self, barcode, type):
+        pass
+
+    def flush(self):
+        request = {
+            "styles": self.styles,
+            "commands": self.commands
+        }
+        requests.post(self.url, json=request)
+        print("SEND IT!")
+
 class ReceiptPrinter(Printer):
-    def __init__(self, com_port):
+    def __init__(self):
         from escpos.printer import Serial      
-        self.p = Serial("COM3", baudrate=19200)
+        self.p = Serial("COM6", baudrate=19200)
 
     def textln(self, text=""):
         self.p.textln(text)
@@ -109,3 +163,4 @@ class ConsolePrinter(Printer):
 def get_printer(type):
     if type == CONSOLE: return ConsolePrinter()
     elif type == REMOTE: return RemotePrinter()
+    elif type == RECEIPT: return ReceiptPrinter() 
