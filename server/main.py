@@ -86,6 +86,3 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 	logging.error(f"{request}: {exc_str}")
 	content = {'status_code': 10422, 'message': exc_str, 'data': None}
 	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
-
-
-U01743-P54G-NVEM-P8KIY
