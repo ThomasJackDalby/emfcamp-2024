@@ -1,14 +1,8 @@
 #!/bin/sh
 # launch.sh
 
-pwd
-cd ~/emfcamp-2024
-pwd
-
+cd /home/fish/emfcamp-2024
 git pull
-
 cd ./server
-pwd
-
 .venv/bin/pip install -r requirements.txt
 .venv/bin/fastapi run main.py
