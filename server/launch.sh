@@ -7,4 +7,4 @@ git pull
 cd ./server
 chmod 755 launch.sh
 .venv/bin/pip install -r requirements.txt
-.venv/bin/fastapi run main.py
+.venv/bin/uvicorn main:app --log-config /home/fish/emfcamp-2024/server/log.ini
