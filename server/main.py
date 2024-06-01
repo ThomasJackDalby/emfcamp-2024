@@ -88,9 +88,13 @@ def post_job(job: PrintJob):
                         align=style.align,
                         underline=style.underline)
                 p.textln(command.content)
-            elif command.type == COMMAND_FEED: p.feed(5)
-            elif command.type == COMMAND_CUT: p.cut()
-            elif command.type == COMMAND_BARCODE: pass
+            elif command.type == COMMAND_FEED: 
+                p.feed(5)
+            elif command.type == COMMAND_CUT: 
+                p.cut()
+            elif command.type == COMMAND_BARCODE:
+                p.barcode(command.content, "UPC-A")
+            
     except Exception as e:
         print("Uh oh, had an error")
         print(e.message)
