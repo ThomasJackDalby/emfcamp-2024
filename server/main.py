@@ -76,7 +76,7 @@ def post_job(job: PrintJob):
             if command.type == COMMAND_TEXT: 
                 if command.style != style_index:
                     style_index = command.style
-                    style = command.styles[style_index]
+                    style = job.styles[style_index]
                     p.set(
                         align=style.align,
                         double_height=style.double_height,
