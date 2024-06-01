@@ -1,7 +1,7 @@
 function sendMessage() {
 
-    let name = document.getElementById("name").innerText;
-    let message = document.getElementById("message").innerText;
+    let name = document.getElementById("name").value;
+    let message = document.getElementById("message").value;
 
     let data = {
         styles: [
@@ -11,12 +11,19 @@ function sendMessage() {
                 "bold": false,
                 "align": "left",
                 "underline": false
+            },
+            {
+                "double_height": true,
+                "double_width": true,
+                "bold": true,
+                "align": "center",
+                "underline": true
             }
         ],
         commands: [
-            { type: "text", content: "Name: "+name, style: 0 },
-            { type: "text", content: "Message: "+message, style: 0 },
-            { type: "cut" },
+            { type: "text", content: "MESSAGE "+name, style: 1 },
+            { type: "text", content: message, style: 0 },
+            { type: "text", content: "From "+name, style: 0 },
         ]
     };
 
