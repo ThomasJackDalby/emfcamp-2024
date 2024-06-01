@@ -1,4 +1,6 @@
 import requests
+from rich import print, traceback
+traceback.install()
 
 REMOTE = 0
 CONSOLE = 1
@@ -32,14 +34,20 @@ class Printer:
 
 COMMAND_TEXT = "text"
 COMMAND_CUT = "cut"
+COMMAND_BARCODE = "barcode"
 COMMAND_FEED = "feed"
+
+ALIGN_LEFT = "left"
+ALIGN_RIGHT = "right"
+ALIGN_CENTER = "center"
 
 class RemotePrinter(Printer):
     def __init__(self):
         self.url = "http://151.216.211.144:8000/api/print"
+        #self.url = "http://localhost:8000/api/print"
+        
         self.commands = []
         self.styles = []
-        self.current_style = {}
 
     def __enter__(self):
         self.commands = []
@@ -53,16 +61,17 @@ class RemotePrinter(Printer):
     def textln(self, text: str=""):
         self.commands.append({
             "type" : COMMAND_TEXT,
-            "content" : text
+            "content" : text,
+            "style": self.style_index
         })
     
     def _get_style_index(self, style):
-        for existing_style, i in enumerate(self.styles):
+        for i, existing_style in enumerate(self.styles):
             if style == existing_style:
                 return i
         return None
 
-    def set(self, double_height=False, double_width=False, bold=False, align="left", underline=False):
+    def set(self, double_height=False, double_width=False, bold=False, align=ALIGN_LEFT, underline=False):
         style = {
             "double_height": double_height,
             "double_width": double_width,
@@ -73,7 +82,7 @@ class RemotePrinter(Printer):
         style_index = self._get_style_index(style)
         if style_index is None:
             self.styles.append(style)
-            style_index = len(self.styles)
+            style_index = len(self.styles) - 1
         self.style_index = style_index
     
     def cut(self):
@@ -82,15 +91,18 @@ class RemotePrinter(Printer):
         })
 
     def barcode(self, barcode, type):
-        pass
+        self.commands.append({
+            "type" : COMMAND_BARCODE,
+            "content": barcode
+        })
 
     def flush(self):
         request = {
             "styles": self.styles,
             "commands": self.commands
         }
+        print(request)
         requests.post(self.url, json=request)
-        print("SEND IT!")
 
 class ReceiptPrinter(Printer):
     def __init__(self):

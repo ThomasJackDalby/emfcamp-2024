@@ -56,18 +56,19 @@ def print_talk(talk, barcode=False, description=False):
     p.textln("-"*42)
 
 def print_schedule(data, day):
-    data = list(filter(lambda talk: parse_datetime(talk['start_date']).day == day, data))
-    p.set(double_height=True, double_width=True, bold=True, align="center")
-    p.textln("EMF SCHEDULE")
-    p.textln(day)
-    cut = 0
-    for talk in sorted(data, key=lambda talk: parse_datetime(talk["start_date"])):
-        print_talk(talk, True, False)
-        cut += 1
-        if cut >= 10:
-            p.cut()
-            cut = 0
-    p.cut()
+    with printers.get_printer(PRINTER_TYPE) as p:
+        data = list(filter(lambda talk: parse_datetime(talk['start_date']).day == day, data))
+        p.set(double_height=True, double_width=True, bold=True, align="center")
+        p.textln("EMF SCHEDULE")
+        p.textln(day)
+        cut = 0
+        for talk in sorted(data, key=lambda talk: parse_datetime(talk["start_date"])):
+            print_talk(talk, True, False)
+            cut += 1
+            if cut >= 10:
+                p.cut()
+                cut = 0
+        p.cut()
 
 def print_custom(data, name):
     print("Please scan who you are?")
