@@ -7,12 +7,10 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 logging.basicConfig(level=logging.DEBUG, filename="logs/fastapi.log")
-# logging.basicConfig(level=logging.DEBUG, filename='loglog.log')
 
 logger = logging.getLogger(__name__)
 
 CONFIG_FILE_NAME = 'config.ini'
-
 COMMAND_TEXT = "text"
 COMMAND_CUT = "cut"
 COMMAND_FEED = "feed"
@@ -36,10 +34,8 @@ class FakePrinter:
         pass
 
 # initialise printer
-if PRINTER_MODE == "serial":
-    p = Serial(PRINTER_SERIAL_ADDRESS, baudrate=PRINTER_BAUDRATE)
-else:
-    p = FakePrinter()
+if PRINTER_MODE == "serial": p = Serial(PRINTER_SERIAL_ADDRESS, baudrate=PRINTER_BAUDRATE)
+else: p = FakePrinter()
 
 class Style(BaseModel):
     double_height: bool | None = False
