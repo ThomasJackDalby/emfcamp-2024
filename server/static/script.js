@@ -1,4 +1,8 @@
 function sendMessage() {
+
+    let name = document.getElementById("name").innerText;
+    let message = document.getElementById("message").innerText;
+
     let data = {
         styles: [
             {
@@ -10,7 +14,9 @@ function sendMessage() {
             }
         ],
         commands: [
-            { type: "text", content: "Browser test message", style: 0 },
+            { type: "text", content: "Name: "+name, style: 0 },
+            { type: "text", content: "Message: "+message, style: 0 },
+            { type: "cut" },
         ]
     };
 
