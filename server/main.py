@@ -69,6 +69,7 @@ def get_root():
 @app.post("/api/print")
 def post_job(job: PrintJob):
     logger.info("Got request!")
+    last_was_cut = False
     try:
         style_index = 0
         for command in job.commands:
@@ -85,22 +86,20 @@ def post_job(job: PrintJob):
                 p.textln(command.content)
             elif command.type == COMMAND_FEED: 
                 p.feed(5)
-            elif command.type == COMMAND_CUT: 
+            elif command.type == COMMAND_CUT:
                 p.cut()
             elif command.type == COMMAND_BARCODE:
                 p.barcode(command.content, "UPC-A")
+        last_was_cut = command.type == COMMAND_CUT
             
     except Exception as e:
         print("Uh oh, had an error")
         print(e.message)
         p.cut()
         p.textln("!! ERROR !!")
-        # print out an error message?
-        pass
     finally:
-        print("done")
-        # always cut to ensure the next job doesn't fail
-        p.cut()
+        if not last_was_cut:
+            p.cut()
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
