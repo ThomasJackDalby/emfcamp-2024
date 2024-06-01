@@ -71,7 +71,7 @@ def post_job(job: PrintJob):
     logger.info("Got request!")
     last_was_cut = False
     try:
-        style_index = 0
+        style_index = -1
         for command in job.commands:
             if command.type == COMMAND_TEXT: 
                 if command.style != style_index:
