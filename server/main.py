@@ -68,13 +68,12 @@ def get_root():
 
 @app.post("/api/print")
 def post_job(job: PrintJob):
-    logger.info("Got request!")
     last_was_cut = False
     try:
         style_index = -1
         for command in job.commands:
             if command.type == COMMAND_TEXT: 
-                if command.style != style_index:
+                if command.style != style_index and style_index < len(job.styles):
                     style_index = command.style
                     style = job.styles[style_index]
                     p.set_with_default(

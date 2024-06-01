@@ -18,12 +18,21 @@ function sendMessage() {
                 "bold": true,
                 "align": "center",
                 "underline": true
+            },
+            {
+                "double_height": false,
+                "double_width": false,
+                "bold": false,
+                "align": "center",
+                "underline": false
             }
         ],
         commands: [
-            { type: "text", content: "MESSAGE "+name, style: 1 },
+            { type: "text", content: "!! MESSAGE !!", style: 1 },
+            { type: "text", content: "-------------", style: 2 },
             { type: "text", content: message, style: 0 },
             { type: "text", content: "From "+name, style: 0 },
+            { type: "text", content: "-------------", style: 2 },
         ]
     };
 
