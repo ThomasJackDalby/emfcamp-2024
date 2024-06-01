@@ -6,7 +6,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-logging.basicConfig(filename="/home/fish/emfcamp-2024/server/logs/fastapi.log")
+# logging.basicConfig(filename="/home/fish/emfcamp-2024/server/logs/fastapi.log")
+logging.basicConfig(level=logging.DEBUG, filename='loglog.log')
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +25,7 @@ config["dev"] = {}
 config.read(CONFIG_FILE_NAME)
 PRINTER_SERIAL_ADDRESS = config["printer"]["serial_address"]
 PRINTER_BAUDRATE = config["printer"]["baudrate"]
-OFFLINE = config["dev"]["offline"]
+PRINTER_MODE = config["printer"]["mode"]
 
 class FakePrinter:
     def textln(self, text):
@@ -35,7 +36,7 @@ class FakePrinter:
         pass
 
 # initialise printer
-if not OFFLINE:
+if PRINTER_MODE == "serial":
     p = Serial(PRINTER_SERIAL_ADDRESS, baudrate=PRINTER_BAUDRATE)
 else:
     p = FakePrinter()
@@ -82,6 +83,7 @@ def post_job(job: PrintJob):
         # print out an error message?
         pass
     finally:
+        print("done")
         # always cut to ensure the next job doesn't fail
         p.cut()
 
@@ -93,3 +95,5 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 	logging.error(f"{request}: {exc_str}")
 	content = {'status_code': 10422, 'message': exc_str, 'data': None}
 	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+logger.info("Initialised the API!")
