@@ -42,7 +42,11 @@ else:
     p = FakePrinter()
 
 class Style(BaseModel):
-    pass
+    double_height: bool | None = False
+    double_width: bool | None = False
+    bold: bool | None = False
+    align: str | None = "left"
+    underline: bool | None = False
 
 class Command(BaseModel):
     type: str | None = None
@@ -70,8 +74,20 @@ def get_root():
 def post_job(job: PrintJob):
     logger.info("Got request!")
     try:
+        style_index = 0
         for command in job.commands:
-            if command.type == COMMAND_TEXT: p.textln(command.content)
+            if command.type == COMMAND_TEXT: 
+                if command.style != style_index:
+                    style_index = command.style
+                    style = command.styles[style_index]
+                    p.set(
+                        align=style.align,
+                        double_height=style.double_height,
+                        double_width=style.double_width,
+                        bold=style.bold,
+                        align=style.align,
+                        underline=style.underline)
+                p.textln(command.content)
             elif command.type == COMMAND_FEED: p.feed(5)
             elif command.type == COMMAND_CUT: p.cut()
             elif command.type == COMMAND_BARCODE: pass
