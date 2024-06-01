@@ -9,4 +9,3 @@ with printers.get_printer(PRINTER_TYPE) as p:
     for i in range(20):
         p.textln("Aaaaaaaaahhhhhhhh")
     p.cut()
-    p.flush()

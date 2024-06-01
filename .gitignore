@@ -4,3 +4,6 @@
 *.pyc
 __pycache__/
 .venv/
+
+# ignore log files
+*.log
