@@ -85,7 +85,7 @@ def post_job(job: PrintJob):
         # always cut to ensure the next job doesn't fail
         p.cut()
 
-app.mount("/", StaticFiles(directory="static"), name="static")
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
