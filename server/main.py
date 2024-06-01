@@ -81,7 +81,6 @@ def post_job(job: PrintJob):
                         double_height=style.double_height,
                         double_width=style.double_width,
                         bold=style.bold,
-                        align=style.align,
                         underline=style.underline)
                 p.textln(command.content)
             elif command.type == COMMAND_FEED: 
