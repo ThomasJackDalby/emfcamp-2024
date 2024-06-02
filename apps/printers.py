@@ -74,7 +74,6 @@ class RemotePrinter(Printer):
         return None
 
     def set(self, double_height=False, double_width=False, bold=False, align=ALIGN_LEFT, underline=False):
-        pass
         style = {
             "double_height": double_height,
             "double_width": double_width,

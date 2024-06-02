@@ -64,7 +64,7 @@ def post_job(job: PrintJob):
     p = get_printer()
     if p is None: raise HTTPException(status_code=500, detail="The printer has smegged itself again...") 
 
-    last_was_cut = False
+    # last_was_cut = False
     try:
         style_index = -1
         for command in job.commands:
@@ -90,11 +90,12 @@ def post_job(job: PrintJob):
     except Exception as e:
         print("Uh oh, had an error")
         print(e.message)
-        p.cut()
+        # p.cut()
         p.textln("!! ERROR !!")
-    finally:
-        if not last_was_cut:
-            p.cut()
+    # removing auto cut to prevent mess.
+    # finally:
+    #     if not last_was_cut:
+    #         p.cut()
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
