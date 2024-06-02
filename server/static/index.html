@@ -7,12 +7,15 @@
         <h1>PRINTER 3000</h1>
         <p>Hello. I am a receipt printer.</p>
         <p>Do you want to send me a message?</p>
-        <div>
+        <div class="panel">
             <h2>Message</h2>
             <label for="Name">Name:</label>
             <input type="text" id="name" name="name" placeholder="John Smith"></input>
             <label for="Message">Message:</label>
-            <input type="text" id="message" name="message" placeholder="John Smith"></input>
+            <textarea class="large-text-box"
+                id="message" 
+                name="message" 
+                placeholder="John Smith"></textarea>
             <button onclick="sendMessage()">Submit</button>
         </div>
         <script src="script.js"></script>
