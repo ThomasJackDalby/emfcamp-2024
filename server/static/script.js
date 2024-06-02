@@ -62,15 +62,15 @@ class Printer
 
     flush() {
         let request = {
-            "styles" : this.commands,
-            "commands" : this.styles,
+            "styles" : this.styles,
+            "commands" : this.commands,
         }
         console.log(request);
         fetch("http://151.216.211.144:8000/api/print", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'}, 
-        body: JSON.stringify(request)
-    }).then(res => {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'}, 
+            body: JSON.stringify(request)
+        }).then(res => {
         console.log("Request complete! response:", res);
     });
     }
