@@ -82,7 +82,7 @@ def post_job(job: PrintJob):
                         double_width=style.double_width,
                         bold=style.bold,
                         underline=style.underline)
-                p.textln(command.content)
+                p.textln(command.content[:5000])
             elif command.type == COMMAND_FEED: 
                 p.feed(5)
             elif command.type == COMMAND_CUT:
