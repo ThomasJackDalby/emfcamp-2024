@@ -1,7 +1,8 @@
 import configparser
 import logging
+import os
 from escpos.printer import Serial
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -19,23 +20,8 @@ COMMAND_BARCODE = "barcode"
 # load config
 config = configparser.ConfigParser()
 config["printer"] = {}
-config["dev"] = {}
 config.read(CONFIG_FILE_NAME)
-PRINTER_SERIAL_ADDRESS = config["printer"]["serial_address"]
 PRINTER_BAUDRATE = config["printer"]["baudrate"]
-PRINTER_MODE = config["printer"]["mode"]
-
-class FakePrinter:
-    def textln(self, text):
-        pass
-    def feed(self, amount):
-        pass
-    def cut(self):
-        pass
-
-# initialise printer
-if PRINTER_MODE == "serial": p = Serial(PRINTER_SERIAL_ADDRESS, baudrate=PRINTER_BAUDRATE)
-else: p = FakePrinter()
 
 class Style(BaseModel):
     double_height: bool | None = False
@@ -59,6 +45,13 @@ def print_error_message(e: Exception):
     p.textln(e.message)
     p.textln("------------")
 
+def get_printer():
+    for file_name in os.listdir("/dev"):
+        if file_name.startswith("ttyUSB"):
+            file_path = f"/dev/{file_name}"
+            return Serial(file_path, baudrate=PRINTER_BAUDRATE)
+    return None
+
 # define api
 app = FastAPI()
 
@@ -68,6 +61,9 @@ def get_root():
 
 @app.post("/api/print")
 def post_job(job: PrintJob):
+    p = get_printer()
+    if p is None: raise HTTPException(status_code=500, detail="The printer has smegged itself again...") 
+
     last_was_cut = False
     try:
         style_index = -1

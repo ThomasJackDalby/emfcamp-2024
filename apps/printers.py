@@ -1,4 +1,5 @@
 import requests
+import json
 from rich import print, traceback
 traceback.install()
 
@@ -61,17 +62,19 @@ class RemotePrinter(Printer):
     def textln(self, text: str=""):
         self.commands.append({
             "type" : COMMAND_TEXT,
-            "content" : text,
+            "content" : str(text),
             "style": self.style_index
         })
     
     def _get_style_index(self, style):
+        return None
         for i, existing_style in enumerate(self.styles):
             if style == existing_style:
                 return i
         return None
 
     def set(self, double_height=False, double_width=False, bold=False, align=ALIGN_LEFT, underline=False):
+        pass
         style = {
             "double_height": double_height,
             "double_width": double_width,
@@ -93,15 +96,17 @@ class RemotePrinter(Printer):
     def barcode(self, barcode, type):
         self.commands.append({
             "type" : COMMAND_BARCODE,
-            "content": barcode
+            "content": str(barcode)
         })
 
     def flush(self):
+        print("Send IT!")
         request = {
             "styles": self.styles,
             "commands": self.commands
         }
-        print(request)
+        with open("request.json", "w") as file:
+            json.dump(request, file)
         requests.post(self.url, json=request)
 
 class ReceiptPrinter(Printer):
@@ -110,7 +115,7 @@ class ReceiptPrinter(Printer):
         self.p = Serial("COM6", baudrate=19200)
 
     def textln(self, text=""):
-        self.p.textln(text)
+        self.p.textln(str(text))
 
     def set_title():
         set(double_height=True, double_width=True, bold=True, align="center")
