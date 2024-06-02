@@ -65,6 +65,7 @@ class Printer
             "styles" : this.commands,
             "commands" : this.styles,
         }
+        console.log(request);
         fetch("http://151.216.211.144:8000/api/print", {
         method: "POST",
         headers: {'Content-Type': 'application/json'}, 
