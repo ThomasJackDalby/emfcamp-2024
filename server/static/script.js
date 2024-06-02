@@ -2,7 +2,7 @@ function sendMessage() {
 
     let name = document.getElementById("name").value;
     let message = document.getElementById("message").value;
-    let p = Printer()
+    let p = new Printer()
 
     p.style(
         double_height=false,
@@ -31,6 +31,7 @@ function sendMessage() {
     p.text(message);
     p.text("From "+name);
     p.text("-------------", 2);
+    p.flush();
 }
 
 class Printer
@@ -42,6 +43,21 @@ class Printer
 
     text(text, style=0) {
         this.commands.push({ type: "text", content: text, style: style });
+    }
+
+    style(double_height=false,
+        double_width=false,
+        bold=false,
+        align="left",
+        underline=false)
+    {
+        this.styles.push({
+            "double_height":double_height,
+            "double_width":double_width,
+            "bold":bold,
+            "align":align,
+            "underline":underline
+        });
     }
 
     flush() {
