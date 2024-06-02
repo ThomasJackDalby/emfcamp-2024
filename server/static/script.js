@@ -77,6 +77,8 @@ class Printer
 }
 
 function getAles() {
-
-
+    fetch("http://151.216.211.144:8000/api/ales", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'}, 
+    })
 }
