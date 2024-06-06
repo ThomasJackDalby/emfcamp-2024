@@ -35,6 +35,9 @@ class Printer:
     def set(self, double_height=False, double_width=False, bold=False, align="left", underline=False):
         raise Exception("Not implemented")
 
+    def image(self, file_path):
+        raise Exception("Not implemented")
+
     def barcode(self, barcode, type):
         raise Exception("Not implemented")
 
@@ -91,6 +94,9 @@ class RemotePrinter(Printer):
             "type" : COMMAND_CUT
         })
 
+    def image(self, file_path):
+        raise Exception("Not supported on remote printers.")
+    
     def barcode(self, barcode, type):
         self.commands.append({
             "type" : COMMAND_BARCODE,
@@ -123,6 +129,9 @@ class ReceiptPrinter(Printer):
     def barcode(self, barcode, type):
         self.p.barcode(barcode, type)
 
+    def image(self, file_path):
+        self.p.image(file_path)
+
     def cut(self):
         self.p.cut()
 
@@ -135,7 +144,7 @@ class ConsolePrinter(Printer):
         print()
         self._print_start()
 
-    def textln(self, text):
+    def textln(self, text: str=""):
         while len(text) > self.width:
             self._print(text[:self.width])
             text = text[self.width:]

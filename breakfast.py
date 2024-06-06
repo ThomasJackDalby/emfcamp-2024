@@ -1,9 +1,8 @@
 import sys
 import printers
 import random
-from regex import D 
 
-PRINTER_TYPE = printers.REMOTE
+PRINTER_TYPE = printers.CONSOLE
 
 class Item:
     def __init__(self, barcode, name):

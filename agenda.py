@@ -9,7 +9,7 @@ import printers
 from rich import print, traceback
 traceback.install()
 
-PRINTER_TYPE = printers.REMOTE
+PRINTER_TYPE = printers.CONSOLE
 USE_CACHED_DATA = False # either fetches from the API, or uses a locally stored .json file.
 CACHED_SCHEDULE_FILE_PATH = ".cache/schedule.json"
 URL = "https://www.emfcamp.org/schedule/2024.json"
