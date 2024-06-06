@@ -7,6 +7,17 @@ REMOTE = 0
 CONSOLE = 1
 RECEIPT = 2
 
+DEFAULT_REMOTE_PRINTER_URL = "http://localhost:8000/api/print"
+
+COMMAND_TEXT = "text"
+COMMAND_CUT = "cut"
+COMMAND_BARCODE = "barcode"
+COMMAND_FEED = "feed"
+
+ALIGN_LEFT = "left"
+ALIGN_RIGHT = "right"
+ALIGN_CENTER = "center"
+
 class Printer:
 
     def __enter__(self):
@@ -33,20 +44,9 @@ class Printer:
     def flush(self):
         pass
 
-COMMAND_TEXT = "text"
-COMMAND_CUT = "cut"
-COMMAND_BARCODE = "barcode"
-COMMAND_FEED = "feed"
-
-ALIGN_LEFT = "left"
-ALIGN_RIGHT = "right"
-ALIGN_CENTER = "center"
-
 class RemotePrinter(Printer):
-    def __init__(self):
-        self.url = "http://151.216.211.144:8000/api/print"
-        #self.url = "http://localhost:8000/api/print"
-        
+    def __init__(self, url=DEFAULT_REMOTE_PRINTER_URL):
+        self.url = url
         self.commands = []
         self.styles = []
 
@@ -67,7 +67,6 @@ class RemotePrinter(Printer):
         })
     
     def _get_style_index(self, style):
-        return None
         for i, existing_style in enumerate(self.styles):
             if style == existing_style:
                 return i
@@ -99,7 +98,6 @@ class RemotePrinter(Printer):
         })
 
     def flush(self):
-        print("Send IT!")
         request = {
             "styles": self.styles,
             "commands": self.commands

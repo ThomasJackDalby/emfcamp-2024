@@ -10,7 +10,7 @@ from rich import print, traceback
 traceback.install()
 
 PRINTER_TYPE = printers.REMOTE
-USE_CACHED_DATA = False
+USE_CACHED_DATA = False # either fetches from the API, or uses a locally stored .json file.
 CACHED_SCHEDULE_FILE_PATH = ".cache/schedule.json"
 URL = "https://www.emfcamp.org/schedule/2024.json"
 DAYS = ["", "", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -22,12 +22,13 @@ def get_data():
     else: 
         return requests.get(URL).json()
 
-def get_day(date):
+def get_day(date: datetime):
     return DAYS[int(date.split(" ")[0][-1])]
 
-def parse_datetime(date):
+def parse_datetime(date: datetime):
     return datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-def format_time(date):
+
+def format_time(date: datetime):
     return datetime.datetime.strftime(date, "%H:%M")
 
 def get_time(date):
